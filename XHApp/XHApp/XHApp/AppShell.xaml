@@ -34,7 +34,7 @@
         <Tab Title="App" Icon="tab_app.png">
             <ShellContent ContentTemplate="{DataTemplate local:BrowserPage}" />
         </Tab>
-        <Tab Title="Item" Icon="tab_ms.png">
+        <Tab Title="Microsoft" Icon="tab_ms.png">
             <ShellContent ContentTemplate="{DataTemplate local:ExternalPage}" />
         </Tab>
         <Tab Title="Item" Icon="tab_feed.png">
