@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Name="currentPage"
+             x:Class="XHApp.Views.CognitivePage"
+             xmlns:vm="clr-namespace:XHApp.ViewModels"
+             Title="{Binding Title}">
+
+    <ContentPage.BindingContext>
+        <vm:CognitiveViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="image.png" Command="{Binding PickPhotoCommand}"></ToolbarItem>
+        <ToolbarItem IconImageSource="camera.png" Command="{Binding TakePhotoCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout Spacing="5" Padding="5">
+
+            <ListView x:Name="ItemsListView"
+                        ItemsSource="{Binding Faces}"
+                        VerticalOptions="FillAndExpand"
+                        HasUnevenRows="true"
+                        IsRefreshing="{Binding IsBusy, Mode=OneWay}" >
+                <ListView.Header>
+                    <Image x:Name="image" Source="{Binding CurrentImage}" WidthRequest="1000" HeightRequest="200"/>
+                </ListView.Header>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Padding="5">
+                                <StackLayout Orientation="Horizontal">
+                                    <Image x:Name="image" Source="{Binding Image}" WidthRequest="100" HeightRequest="100" HorizontalOptions="StartAndExpand"/>
+                                    <Label Text="识别为："  TextColor="#333333" FontSize="12" HorizontalOptions="StartAndExpand"></Label>
+                                    <Label Text="{Binding Name}" TextColor="#333333" FontSize="12" HorizontalOptions="StartAndExpand"></Label>
+                                    <Button  Text="编辑" BorderColor="Azure" BackgroundColor="Azure" Command="{Binding BindingContext.EditFaceCommand, Source={x:Reference currentPage}}"  CommandParameter="{Binding .}"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

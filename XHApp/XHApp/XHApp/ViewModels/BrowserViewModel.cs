@@ -26,7 +26,7 @@ namespace XHApp.ViewModels
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         Shell.Current.Navigation.PopModalAsync();
-                        Shell.Current.DisplayAlert("Scanned Barcode", result.Text, "OK");
+                        Shell.Current.DisplayAlert("Message", result.Text, "OK");
                     });
                 };
 

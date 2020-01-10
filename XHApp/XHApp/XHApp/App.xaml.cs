@@ -17,6 +17,8 @@ namespace XHApp
             InitializeComponent();
 
             DependencyService.Register<MockDataStore>();
+            DependencyService.Register<MockToolsDataStore>();
+
             MainPage = new AppShell();
 
             AppCenter.Start("android=708f4271-7e68-43c4-8d27-fbe07e4e88f1;" +

@@ -3,17 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:webview="clr-namespace:Xam.Plugin.WebView.Abstractions;assembly=Xam.Plugin.WebView.Abstractions"
+             xmlns:cut="clr-namespace:XHApp.CustomViews"
              mc:Ignorable="d"
-             Title="Microsoft"
+             Title="{Binding Title}"
              x:Class="XHApp.Views.ExternalPage">
     <ContentPage.Content>
         <StackLayout>
-            <webview:FormsWebView x:Name="appWebView"
+            <cut:EnglishAssistantView x:Name="appWebView"
                                        HorizontalOptions="FillAndExpand" 
-                                       VerticalOptions="FillAndExpand"
-                                       ContentType="Internet"
-                                       Source="https://cloud-platform-assets.azurewebsites.net/intelligent-security-graph/"/>
+                                       VerticalOptions="FillAndExpand" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
