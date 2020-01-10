@@ -17,31 +17,5 @@ namespace XHApp.Views
             InitializeComponent();
             BindingContext = this.viewModel = viewModel;
         }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            StartPage(viewModel.Uri);
-        }
-
-        internal void StartPage(string uri)
-        {
-            UriBuilder source = new UriBuilder(uri);
-            source.Query += string.IsNullOrWhiteSpace(source.Query) ? string.Empty : "&";
-
-            switch (Device.RuntimePlatform)
-            {
-                case Device.iOS:
-                    source.Query += "origin=ios-xinfangxiang";
-                    break;
-                case Device.Android:
-                    source.Query += "origin=android-xinfangxiang";
-                    break;
-                default:
-                    break;
-            }
-
-            this.appWebView.Source = source.ToString();
-        }
     }
 }

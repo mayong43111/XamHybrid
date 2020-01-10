@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Xamarin.Forms;
 
 namespace XHApp.ViewModels
 {
@@ -11,7 +10,27 @@ namespace XHApp.ViewModels
         public ExternalViewModel(string title, string uri)
         {
             this.Title = title;
-            this.Uri = uri;
+            this.Uri = CalculateUri(uri);
+        }
+
+        private string CalculateUri(string uri)
+        {
+            UriBuilder source = new UriBuilder(uri);
+            source.Query += string.IsNullOrWhiteSpace(source.Query) ? string.Empty : "&";
+
+            switch (Device.RuntimePlatform)
+            {
+                case Device.iOS:
+                    source.Query += "origin=ios-xinfangxiang";
+                    break;
+                case Device.Android:
+                    source.Query += "origin=android-xinfangxiang";
+                    break;
+                default:
+                    break;
+            }
+
+            return source.ToString();
         }
     }
 }

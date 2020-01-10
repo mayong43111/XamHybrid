@@ -21,10 +21,8 @@ namespace XHApp
 
             MainPage = new AppShell();
 
-            AppCenter.Start("android=708f4271-7e68-43c4-8d27-fbe07e4e88f1;" +
-                  "uwp={Your UWP App secret here};" +
-                  "ios=d15c46b2-6708-40e1-8efe-478a44f9deb9",
-                  typeof(Analytics), typeof(Crashes));
+            AppCenter.Start("0339f275-e252-4120-8001-b619d998ad86",
+                               typeof(Analytics), typeof(Crashes));
         }
 
         protected override void OnStart()

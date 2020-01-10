@@ -11,7 +11,8 @@
         <StackLayout>
             <cut:EnglishAssistantView x:Name="appWebView"
                                        HorizontalOptions="FillAndExpand" 
-                                       VerticalOptions="FillAndExpand" />
+                                       VerticalOptions="FillAndExpand"
+                                      Source="{Binding Uri}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
