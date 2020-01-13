@@ -1,4 +1,5 @@
-﻿using Android.OS;
+﻿using Android.Content;
+using Android.OS;
 using Android.Webkit;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,14 @@ namespace Xam.Plugin.WebView.Droid
 {
     public class FormsWebViewRenderer : ViewRenderer<FormsWebView, Android.Webkit.WebView>
     {
+        private readonly Context context;
+
+        public FormsWebViewRenderer(Context context)
+            : base(context)
+        {
+            this.context = context;
+        }
+
 
         public static string MimeType = "text/html";
 
@@ -82,7 +91,7 @@ namespace Xam.Plugin.WebView.Droid
 
         void SetupControl()
         {
-            var webView = new Android.Webkit.WebView(Forms.Context);
+            var webView = new Android.Webkit.WebView(this.context);
             _callback = new JavascriptValueCallback(this);
 
             // https://github.com/SKLn-Rad/Xam.Plugin.WebView.Webview/issues/11
@@ -92,7 +101,7 @@ namespace Xam.Plugin.WebView.Droid
             webView.Settings.JavaScriptEnabled = true;
             webView.Settings.DomStorageEnabled = true;
             webView.AddJavascriptInterface(new FormsWebViewBridge(this), "bridge");
-            webView.SetWebViewClient(new FormsWebViewClient(this));
+            webView.SetWebViewClient(new FormsWebViewClient(this, this.context));
             webView.SetWebChromeClient(new FormsWebViewChromeClient(this));
             webView.SetBackgroundColor(Android.Graphics.Color.Transparent);
 
@@ -173,28 +182,32 @@ namespace Xam.Plugin.WebView.Droid
             _callback.Reset();
 
             var response = string.Empty;
-            
-            Device.BeginInvokeOnMainThread(() => Control.EvaluateJavascript(js, _callback));
+
+            //Device.BeginInvokeOnMainThread(() => Control.EvaluateJavascript(js, _callback));
+            Control.EvaluateJavascript(js, _callback);
 
             // wait!
             await Task.Run(() =>
             {
-                while (_callback.Value == null) { }
-
-                // Get the string and strip off the quotes
-                if (_callback.Value is Java.Lang.String)
+                try
                 {
-                    // Unescape that damn Unicode Java bull.
-                    response = Regex.Replace(_callback.Value.ToString(), @"\\[Uu]([0-9A-Fa-f]{4})", m => char.ToString((char)ushort.Parse(m.Groups[1].Value, NumberStyles.AllowHexSpecifier)));
-                    response = Regex.Unescape(response);
+                    while (_callback.Value == null) { }
 
-                    if (response.Equals("\"null\""))
-                        response = null;
+                    // Get the string and strip off the quotes
+                    if (_callback.Value is Java.Lang.String)
+                    {
+                        // Unescape that damn Unicode Java bull.
+                        response = Regex.Replace(_callback.Value.ToString(), @"\\[Uu]([0-9A-Fa-f]{4})", m => char.ToString((char)ushort.Parse(m.Groups[1].Value, NumberStyles.AllowHexSpecifier)));
+                        response = Regex.Unescape(response);
 
-                    else if (response.StartsWith("\"") && response.EndsWith("\""))
-                        response = response.Substring(1, response.Length - 2);
+                        if (response.Equals("\"null\""))
+                            response = null;
+
+                        else if (response.StartsWith("\"") && response.EndsWith("\""))
+                            response = response.Substring(1, response.Length - 2);
+                    }
                 }
-
+                catch { }
             });
 
             // return

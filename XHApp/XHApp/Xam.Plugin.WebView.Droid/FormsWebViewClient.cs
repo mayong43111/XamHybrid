@@ -12,12 +12,13 @@ namespace Xam.Plugin.WebView.Droid
 {
     public class FormsWebViewClient : WebViewClient
     {
-
+        readonly Context Context;
         readonly WeakReference<FormsWebViewRenderer> Reference;
 
-        public FormsWebViewClient(FormsWebViewRenderer renderer)
+        public FormsWebViewClient(FormsWebViewRenderer renderer, Context context)
         {
             Reference = new WeakReference<FormsWebViewRenderer>(renderer);
+            Context = context;
         }
 
         public override void OnReceivedHttpError(Android.Webkit.WebView view, IWebResourceRequest request, WebResourceResponse errorResponse)
@@ -35,7 +36,7 @@ namespace Xam.Plugin.WebView.Droid
             if (Reference == null || !Reference.TryGetTarget(out FormsWebViewRenderer renderer)) return;
             if (renderer.Element == null) return;
 
-            renderer.Element.HandleNavigationError((int) error.ErrorCode);
+            renderer.Element.HandleNavigationError((int)error.ErrorCode);
             renderer.Element.HandleNavigationCompleted(request.Url.ToString());
             renderer.Element.Navigating = false;
         }
@@ -132,32 +133,36 @@ namespace Xam.Plugin.WebView.Droid
 
         bool AttemptToHandleCustomUrlScheme(Android.Webkit.WebView view, string url)
         {
-            if (url.StartsWith("mailto"))
+            try
             {
-                Android.Net.MailTo emailData = Android.Net.MailTo.Parse(url);
+                if (url.StartsWith("mailto"))
+                {
+                    Android.Net.MailTo emailData = Android.Net.MailTo.Parse(url);
 
-                Intent email = new Intent(Intent.ActionSendto);
+                    Intent email = new Intent(Intent.ActionSendto);
 
-                email.SetData(Android.Net.Uri.Parse("mailto:"));
-                email.PutExtra(Intent.ExtraEmail, new String[] { emailData.To });
-                email.PutExtra(Intent.ExtraSubject, emailData.Subject);
-                email.PutExtra(Intent.ExtraCc, emailData.Cc);
-                email.PutExtra(Intent.ExtraText, emailData.Body);
+                    email.SetData(Android.Net.Uri.Parse("mailto:"));
+                    email.PutExtra(Intent.ExtraEmail, new String[] { emailData.To });
+                    email.PutExtra(Intent.ExtraSubject, emailData.Subject);
+                    email.PutExtra(Intent.ExtraCc, emailData.Cc);
+                    email.PutExtra(Intent.ExtraText, emailData.Body);
 
-                if (email.ResolveActivity(Forms.Context.PackageManager) != null)
-                    Forms.Context.StartActivity(email);
+                    if (email.ResolveActivity(Context.PackageManager) != null)
+                        Context.StartActivity(email);
 
-                return true;
+                    return true;
+                }
+
+                if (url.StartsWith("http"))
+                {
+                    Intent webPage = new Intent(Intent.ActionView, Android.Net.Uri.Parse(url));
+                    if (webPage.ResolveActivity(Context.PackageManager) != null)
+                        Context.StartActivity(webPage);
+
+                    return true;
+                }
             }
-
-            if (url.StartsWith("http"))
-            {
-                Intent webPage = new Intent(Intent.ActionView, Android.Net.Uri.Parse(url));
-                if (webPage.ResolveActivity(Forms.Context.PackageManager) != null)
-                    Forms.Context.StartActivity(webPage);
-
-                return true;
-            }
+            catch { }
 
             return false;
         }
@@ -181,27 +186,31 @@ namespace Xam.Plugin.WebView.Droid
 
         public async override void OnPageFinished(Android.Webkit.WebView view, string url)
         {
-            if (Reference == null || !Reference.TryGetTarget(out FormsWebViewRenderer renderer)) return;
-            if (renderer.Element == null) return;
+            try
+            {
+                if (Reference == null || !Reference.TryGetTarget(out FormsWebViewRenderer renderer)) return;
+                if (renderer.Element == null) return;
 
-            // Add Injection Function
-            await renderer.OnJavascriptInjectionRequest(FormsWebView.InjectedFunction);
+                // Add Injection Function
+                await renderer.OnJavascriptInjectionRequest(FormsWebView.InjectedFunction);
 
-            // Add Global Callbacks
-            if (renderer.Element.EnableGlobalCallbacks)
-                foreach (var callback in FormsWebView.GlobalRegisteredCallbacks)
+                // Add Global Callbacks
+                if (renderer.Element.EnableGlobalCallbacks)
+                    foreach (var callback in FormsWebView.GlobalRegisteredCallbacks)
+                        await renderer.OnJavascriptInjectionRequest(FormsWebView.GenerateFunctionScript(callback.Key));
+
+                // Add Local Callbacks
+                foreach (var callback in renderer.Element.LocalRegisteredCallbacks)
                     await renderer.OnJavascriptInjectionRequest(FormsWebView.GenerateFunctionScript(callback.Key));
 
-            // Add Local Callbacks
-            foreach (var callback in renderer.Element.LocalRegisteredCallbacks)
-                await renderer.OnJavascriptInjectionRequest(FormsWebView.GenerateFunctionScript(callback.Key));
+                renderer.Element.CanGoBack = view.CanGoBack();
+                renderer.Element.CanGoForward = view.CanGoForward();
+                renderer.Element.Navigating = false;
 
-            renderer.Element.CanGoBack = view.CanGoBack();
-            renderer.Element.CanGoForward = view.CanGoForward();
-            renderer.Element.Navigating = false;
-
-            renderer.Element.HandleNavigationCompleted(url);
-            renderer.Element.HandleContentLoaded();
+                renderer.Element.HandleNavigationCompleted(url);
+                renderer.Element.HandleContentLoaded();
+            }
+            catch { }
         }
     }
 }
