@@ -72,13 +72,10 @@
     <PackageReference Include="Xam.Plugin.Media">
       <Version>4.0.1.5</Version>
     </PackageReference>
-    <PackageReference Include="Xam.Plugin.WebView">
-      <Version>2.1.3</Version>
-    </PackageReference>
     <PackageReference Include="Xam.Plugins.Vibrate">
       <Version>4.0.0.5</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.4.0.991265" />
+    <PackageReference Include="Xamarin.Forms" Version="4.4.0.991477" />
     <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
     <PackageReference Include="ZXing.Net.Mobile">
       <Version>2.4.1</Version>
@@ -214,6 +211,14 @@
     <AndroidResource Include="Resources\drawable\tab_feed.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Xam.Plugin.WebView.Abstractions\Xam.Plugin.WebView.Abstractions.csproj">
+      <Project>{0da6aec4-84f7-463f-afb1-4377431f28f6}</Project>
+      <Name>Xam.Plugin.WebView.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xam.Plugin.WebView.Droid\Xam.Plugin.WebView.Droid.csproj">
+      <Project>{a4818671-56ab-449f-9bb0-8931c8f5daf7}</Project>
+      <Name>Xam.Plugin.WebView.Droid</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHApp\XHApp.csproj">
       <Project>{4551416E-84FC-4E84-9D9A-E79CEC12A1BE}</Project>
       <Name>XHApp</Name>

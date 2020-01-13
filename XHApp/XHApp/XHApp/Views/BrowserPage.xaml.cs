@@ -25,74 +25,85 @@ namespace XHApp.Views
 
         private void SetWebviewCallbackAndEvents()
         {
-            //This will be triggered by webview
-            appWebView.AddLocalCallback("camera", (str) =>
+            try
             {
-                //DisplayAlert(str, "拍照", "OK");
-                Task.Run(async () =>
+
+                //This will be triggered by webview
+                appWebView.AddLocalCallback("camera", (str) =>
                 {
-                    var cameraStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
-                    var storageStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
-
-                    if (cameraStatus != PermissionStatus.Granted || storageStatus != PermissionStatus.Granted)
-                    {
-                        await CrossPermissions.Current.RequestPermissionsAsync(Permission.Camera);
-                        await CrossPermissions.Current.RequestPermissionsAsync(new[] { Permission.Storage });
-                    }
-
-                    if (cameraStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted)
-                    {
-                        var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+                    //DisplayAlert(str, "拍照", "OK");
+                    Task.Run(async () =>
                         {
-                            Directory = "Sample",
-                            Name = "test.jpg"
+                            var cameraStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
+                            var storageStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
+
+                            if (cameraStatus != PermissionStatus.Granted || storageStatus != PermissionStatus.Granted)
+                            {
+                                await CrossPermissions.Current.RequestPermissionsAsync(Permission.Camera);
+                                await CrossPermissions.Current.RequestPermissionsAsync(new[] { Permission.Storage });
+                            }
+
+                            if (cameraStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted)
+                            {
+                                var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+                                {
+                                    Directory = "Sample",
+                                    Name = "test.jpg"
+                                });
+                            }
+                            else
+                            {
+                                await DisplayAlert("Permissions Denied", "Unable to take photos.", "OK");
+                                //On iOS you may want to send your user to the settings screen.
+                                //CrossPermissions.Current.OpenAppSettings();
+                            }
                         });
-                    }
-                    else
-                    {
-                        await DisplayAlert("Permissions Denied", "Unable to take photos.", "OK");
-                        //On iOS you may want to send your user to the settings screen.
-                        //CrossPermissions.Current.OpenAppSettings();
-                    }
                 });
-            });
 
-            appWebView.AddLocalCallback("qrcode", (str) =>
-            {
-                //DisplayAlert(str, "扫码", "OK");
-
-                Device.BeginInvokeOnMainThread(async () =>
+                appWebView.AddLocalCallback("qrcode", (str) =>
                 {
-                    var scanPage = new ZXingScannerPage();
-                    scanPage.OnScanResult += (result) =>
-                    {
-                        scanPage.IsScanning = false;
+                    //DisplayAlert(str, "扫码", "OK");
 
-                        Device.BeginInvokeOnMainThread(() =>
+                    Device.BeginInvokeOnMainThread(async () =>
                         {
-                            Shell.Current.Navigation.PopModalAsync();
-                            Shell.Current.DisplayAlert("Message", result.Text, "OK");
+                            var scanPage = new ZXingScannerPage();
+                            scanPage.OnScanResult += (result) =>
+                            {
+                                scanPage.IsScanning = false;
+
+                                Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    Shell.Current.Navigation.PopModalAsync();
+                                    Shell.Current.DisplayAlert("Message", result.Text, "OK");
+                                });
+                            };
+
+                            await Shell.Current.Navigation.PushModalAsync(scanPage);
                         });
-                    };
-
-                    await Shell.Current.Navigation.PushModalAsync(scanPage);
                 });
-            });
 
-            appWebView.AddLocalCallback("viber", (str) =>
-            {
-                //DisplayAlert(str, "震动", "OK");
+                appWebView.AddLocalCallback("viber", (str) =>
+                {
+                    //DisplayAlert(str, "震动", "OK");
 
-                Plugin.Vibrate.CrossVibrate.Current.Vibration(TimeSpan.FromSeconds(1));
-            });
+                    Plugin.Vibrate.CrossVibrate.Current.Vibration(TimeSpan.FromSeconds(1));
+                });
 
-            appWebView.AddLocalCallback("device", (str) =>
-            {
-                //DisplayAlert(str, "取设备信息", "OK");
+                appWebView.AddLocalCallback("device", (str) =>
+                {
+                    //DisplayAlert(str, "取设备信息", "OK");
 
-                var deviceInfo = Plugin.DeviceInfo.CrossDeviceInfo.Current;
-                DisplayAlert("取设备信息", $"{deviceInfo.Manufacturer}-{deviceInfo.Model}-{deviceInfo.DeviceName}", "OK");
-            });
+                    var deviceInfo = Plugin.DeviceInfo.CrossDeviceInfo.Current;
+                    DisplayAlert("取设备信息", $"{deviceInfo.Manufacturer}-{deviceInfo.Model}-{deviceInfo.DeviceName}", "OK");
+                });
+            }
+            catch { }
+        }
+
+        protected override void OnDisappearing()
+        {
+            this.appWebView.Dispose();
+            base.OnDisappearing();
         }
     }
 }

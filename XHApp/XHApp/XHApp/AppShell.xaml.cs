@@ -11,8 +11,6 @@ namespace XHApp
         public AppShell()
         {
             InitializeComponent();
-
-            Routing.RegisterRoute("test", typeof(TestPage));
         }
     }
 }
