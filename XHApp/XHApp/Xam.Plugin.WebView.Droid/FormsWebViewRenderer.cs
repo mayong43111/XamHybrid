@@ -183,8 +183,15 @@ namespace Xam.Plugin.WebView.Droid
 
             var response = string.Empty;
 
-            //Device.BeginInvokeOnMainThread(() => Control.EvaluateJavascript(js, _callback));
-            Control.EvaluateJavascript(js, _callback);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                try
+                {
+                    Control.EvaluateJavascript(js, _callback);
+                }
+                catch { }
+            });
+            //Control.EvaluateJavascript(js, _callback);
 
             // wait!
             await Task.Run(() =>

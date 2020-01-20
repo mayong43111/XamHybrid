@@ -40,6 +40,9 @@
         <Tab Title="人脸" Icon="tab_about.png">
             <ShellContent ContentTemplate="{DataTemplate local:CognitivePage}" />
         </Tab>
+        <Tab Title="登录" Icon="tab_feed.png">
+            <ShellContent ContentTemplate="{DataTemplate local:LoginPage}" />
+        </Tab>
         <Tab Title="列表" Icon="tab_feed.png">
             <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
         </Tab>

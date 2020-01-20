@@ -31,7 +31,7 @@ namespace XHApp.Actions
             Endpoint = faceEndpoint
         };
 
-        public async Task<ObservableCollection<FaceClientResultModel>> Detection(MediaFile file)
+        public async Task<ObservableCollection<FaceClientResultModel>> Detection(Func<Stream> stream)
         {
             ObservableCollection<FaceClientResultModel> result = new ObservableCollection<FaceClientResultModel>();
 
@@ -48,7 +48,7 @@ namespace XHApp.Actions
 
             try
             {
-                faceList = await faceClient.Face.DetectWithStreamAsync(file.GetStream(), true, false, recognitionModel: recognitionModel, detectionModel: detectionModel);
+                faceList = await faceClient.Face.DetectWithStreamAsync(stream(), true, false, recognitionModel: recognitionModel, detectionModel: detectionModel);
                 var faceIds = faceList.Where(face => face.FaceId.HasValue).Select(face => face.FaceId.Value).ToList();
                 var groupId = await EnsurePersonGroup(personGroupId);
 
@@ -74,7 +74,7 @@ namespace XHApp.Actions
                     FaceID = face.FaceId.ToString(),
                     Name = await GetPersonNameAsync(identifyResult, face.FaceId),
                     ImageData = CaptureImage(
-                                 file.GetStream(),
+                                 stream(),
                                  face.FaceRectangle.Left,
                                  face.FaceRectangle.Top,
                                  face.FaceRectangle.Width,
@@ -86,6 +86,16 @@ namespace XHApp.Actions
             }
 
             return result;
+        }
+
+        public async Task<ObservableCollection<FaceClientResultModel>> Detection(byte[] data)
+        {
+            return await Detection(() => new MemoryStream(data));
+        }
+
+        public async Task<ObservableCollection<FaceClientResultModel>> Detection(MediaFile file)
+        {
+            return await Detection(() => file.GetStream());
         }
 
 

@@ -77,6 +77,9 @@
     </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="4.4.0.991477" />
     <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Vision">
+      <Version>71.1702.1</Version>
+    </PackageReference>
     <PackageReference Include="ZXing.Net.Mobile">
       <Version>2.4.1</Version>
     </PackageReference>
@@ -85,10 +88,15 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\CameraSourcePreview.cs" />
+    <Compile Include="CustomControls\FaceCameraActivity.cs" />
+    <Compile Include="CustomControls\FaceGraphic.cs" />
+    <Compile Include="CustomControls\GraphicOverlay.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Renderers\EnglishAssistantViewRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\FaceCameraService.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\www\css\bootstrap.css.map" />
@@ -4548,6 +4556,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\tool_qm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\FaceCamera.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

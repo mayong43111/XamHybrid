@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="XHApp.Views.LoginPage"
+             xmlns:vm="clr-namespace:XHApp.ViewModels"
+             Title="{Binding Title}">
+
+    <ContentPage.BindingContext>
+        <vm:LoginViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <StackLayout>
+            <Image Source="{Binding CurrentImage}"  WidthRequest="1000" HeightRequest="300"/>
+            <Label x:Name="appResult" Text="{Binding UserNames}" FontSize="Medium" />
+            <ImageButton Source="camera.png"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" WidthRequest="150" HeightRequest="150" Command="{Binding VisionCommand}"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
