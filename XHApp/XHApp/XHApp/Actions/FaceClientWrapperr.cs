@@ -169,9 +169,13 @@ namespace XHApp.Actions
 
             if (candidateIds != null && candidateIds.Any())
             {
-                var person = await faceClient.PersonGroupPerson.GetAsync(personGroupId, candidateIds[0].PersonId);
+                try
+                {
+                    var person = await faceClient.PersonGroupPerson.GetAsync(personGroupId, candidateIds[0].PersonId);
 
-                return person.Name;
+                    return person.Name;
+                }
+                catch { }
             }
 
             return string.Empty;

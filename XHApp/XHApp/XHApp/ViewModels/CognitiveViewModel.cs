@@ -93,7 +93,7 @@ namespace XHApp.ViewModels
                         return;
                     }
 
-                    var file = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions());
+                    var file = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions() { PhotoSize = PhotoSize.Large });
                     await Detection(file);
                 }
             }
