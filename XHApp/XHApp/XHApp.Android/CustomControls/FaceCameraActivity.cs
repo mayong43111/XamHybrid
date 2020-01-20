@@ -257,7 +257,7 @@ namespace XHApp.Droid.CustomControls
 
             try
             {
-                if (mCameraSource != null && !isProcessing && face.Width > 250 && face.Height > 250 && face.Position.X > 50 && face.Position.Y > 150 && face.Position.X < 200 && face.Position.Y < 300)
+                if (mCameraSource != null && !isProcessing)// && face.Width > 250 && face.Height > 250 && face.Position.X > 50 && face.Position.Y > 150 && face.Position.X < 200 && face.Position.Y < 300)
                     mCameraSource.TakePicture(null, this);
             }
             catch { }

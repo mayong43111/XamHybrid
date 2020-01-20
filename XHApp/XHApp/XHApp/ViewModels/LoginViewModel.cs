@@ -1,5 +1,6 @@
 ﻿using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -70,7 +71,10 @@ namespace XHApp.ViewModels
                     this.UserNames = string.Join(" | ", faces.Where(f => !string.IsNullOrEmpty(f.Name)).Select(f => f.Name));
                 });
             }
-            catch { }
+            catch (Exception ex)
+            {
+                this.UserNames = ex.Message;
+            }
         }
     }
 }
